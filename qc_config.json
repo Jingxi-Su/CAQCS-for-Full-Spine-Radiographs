@@ -1,0 +1,227 @@
+{
+    "current_run_context": {
+        "annotator_tool": "labelme",
+        "data_view": "AP",
+        "base_data_path": "./test",
+        "structure_id": "FLAT_FILE"
+    },
+
+    "config": {
+        "description": "全脊柱X光片标注质控配置，包含正位(AP)和侧位(LAT)规则。所有逻辑均基于'standard_spinal_sequence'中的医学标准名称。",
+        "supported_annotators": ["labelme", "slicer"],
+        "normalization_scale": 1000,
+        "mirror_x_axis": true,
+        "standard_spinal_sequence": ["C0", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12", "T13", "L1", "L2", "L3", "L4", "L5", "L6", "S1"]
+    },
+
+    "path_templates": {
+        "description": "预定义的常见数据集结构模板。{CASE}为顶层文件夹ID，{FILE_NAME}为标注文件名（不含扩展名）。",
+        "FLAT_FILE": "{FILE_NAME}.json",
+        "NESTED_PATIENT": "{CASE}/{FILE_NAME}.json",
+        "NESTED_SEQUENCE": "{CASE}/{SEQUENCE_ID}/{FILE_NAME}.json",
+        "SLICER_DIR": "{CASE}/{SEQUENCE_ID}"
+    },
+
+    "label_mapping": {
+        "description": "【核心配置】以医学标准标签为中心，配置其所有可能的实际标注名称。键(Key)为QC内部标准名，值(Value)为标注员可能使用的实际标签列表。",
+        "COMMON": {
+            "view_description": "通用标签映射：主要用于正侧位名称一致的椎体分割标签和数字编号。",
+            "standard_to_actual_map": {
+                "C0": ["C0_seg", "C0"],
+                "C1": ["C1_seg", "C1"],
+                "C2": ["C2_seg", "C2"],
+                "C3": ["C3_seg", "C3"],
+                "C4": ["C4_seg", "C4"],
+                "C5": ["C5_seg", "C5"],
+                "C6": ["C6_seg", "C6"],
+                "C7": ["C7_seg", "C7", "0", "Segment_0"],
+                "T1": ["T1_seg", "T1", "1", "Segment_1"],
+                "T2": ["T2_seg", "T2", "2", "Segment_2"],
+                "T3": ["T3_seg", "T3", "3", "Segment_3"],
+                "T4": ["T4_seg", "T4", "4", "Segment_4"],
+                "T5": ["T5_seg", "T5", "5", "Segment_5"],
+                "T6": ["T6_seg", "T6", "6", "Segment_6"],
+                "T7": ["T7_seg", "T7", "7", "Segment_7"],
+                "T8": ["T8_seg", "T8", "8", "Segment_8"],
+                "T9": ["T9_seg", "T9", "9", "Segment_9"],
+                "T10": ["T10_seg", "T10", "10", "Segment_10"],
+                "T11": ["T11_seg", "T11", "11", "Segment_11"],
+                "T12": ["T12_seg", "T12", "12", "Segment_12"],
+                "L1": ["L1_seg", "L1", "13", "Segment_13"],
+                "L2": ["L2_seg", "L2", "14", "Segment_14"],
+                "L3": ["L3_seg", "L3", "15", "Segment_15"],
+                "L4": ["L4_seg", "L4", "16", "Segment_16"],
+                "L5": ["L5_seg", "L5", "17", "Segment_17"],
+                "L6": ["L6", "18", "Segment_18"],
+                "T13": ["T13", "19", "Segment_19"]
+            }
+        },
+
+        "AP": {
+            "view_description": "正位（AP）视图标签映射",
+            "_extends": "COMMON",
+            "standard_to_actual_map": {
+                "Left_Clavicle_Highest": ["Clavicle_L_Top", "LCLT", "CL"],
+                "Right_Clavicle_Highest": ["Clavicle_R_Top", "RCLT", "CR"],
+                "Left_Pelvis_Highest": ["Pelvis_L_Top", "LPH", "IL"],
+                "Right_Pelvis_Highest": ["Pelvis_R_Top", "RPH", "IR"],
+                "S1_Superior_L": ["S1_LUpper", "SL"],
+                "S1_Superior_R": ["S1_RUpper", "SR"]
+            }
+        },
+        "LAT": {
+            "view_description": "侧位（LAT）视图标签映射",
+            "_extends": "COMMON",
+            "standard_to_actual_map": {
+                "S1_Superior_Endplate_Line": ["S1_Endplate_Line_Actual", "S1_Endplate_Line", "S1"],
+                "CFH_Midpoint": ["CFH_Midpoint_Actual", "cfh", "CFH"]
+            }
+        }
+    },
+
+    "vertebra_range_groups": {
+        "description": "预设的椎体范围组，用于SEGMENTATION_COMPLETENESS检查。",
+        "T1-L5": ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12", "L1", "L2", "L3", "L4", "L5"],
+        "C7-L5": ["C7", "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12", "L1", "L2", "L3", "L4", "L5"],
+        "C0-L5": ["C0", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12", "L1", "L2", "L3", "L4", "L5"]
+    },
+
+    "data_structure": {
+        "description": "数据集文件结构配置模板（仅包含静态信息：文件类型）。",
+        "labelme_template": {
+            "file_type": "single_file"
+        },
+        "slicer_template": {
+            "file_type": "directory"
+        }
+    },
+
+    "rules": [
+        {
+            "id": "AP_SPINE_SEGMENTATION_CHECK",
+            "name_cn": "正位全脊柱分割区域检查",
+            "enabled": true,
+            "view": "AP",
+            "check_type": "SEGMENTATION_COMPLETENESS",
+            "params": {
+                "required_labels_group": "C7-L5",
+                "optional_labels": ["T13", "L6"],
+                "sequence_check": true,
+                "label_type": "polygon"
+            }
+        },
+        {
+            "id": "LAT_SPINE_SEGMENTATION_CHECK",
+            "name_cn": "侧位全脊柱分割区域检查",
+            "enabled": true,
+            "view": "LAT",
+            "check_type": "SEGMENTATION_COMPLETENESS",
+            "params": {
+                "required_labels_group": "C7-L5",
+                "optional_labels": ["T13", "L6"],
+                "sequence_check": true,
+                "label_type": "polygon"
+            }
+        },
+        {
+            "id": "AP_CLAVICLE_POSITION_CHECK",
+            "name_cn": "正位左右锁骨最高点检查",
+            "enabled": true,
+            "view": "AP",
+            "check_type": "POINT_POSITION_CHECK",
+            "params": {
+                "target_labels": [
+                    {"label": "Left_Clavicle_Highest", "required": true, "type": "point"},
+                    {"label": "Right_Clavicle_Highest", "required": true, "type": "point"}
+                ],
+                "position_rules": [
+                    {"target": "Left_Clavicle_Highest", "check": "ABSOLUTE_X", "operator": "<", "threshold": 500, "message": "应在左半边"},
+                    {"target": "Right_Clavicle_Highest", "check": "ABSOLUTE_X", "operator": ">", "threshold": 500, "message": "应在右半边"},
+
+                    {
+                        "target": "Left_Clavicle_Highest",
+                        "check": "RELATIVE_Y",
+                        "operator": "<",
+                        "relative_to": "T4",
+                        "message": "应在T4上方"
+                    },
+                    {
+                        "target": "Right_Clavicle_Highest",
+                        "check": "RELATIVE_Y",
+                        "operator": "<",
+                        "relative_to": "T4",
+                        "message": "应在T4上方"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "AP_PELVIS_POSITION_CHECK",
+            "name_cn": "正位左右骨盆最高点检查",
+            "enabled": true,
+            "view": "AP",
+            "check_type": "POINT_POSITION_CHECK",
+            "params": {
+                "target_labels": [
+                    {"label": "Left_Pelvis_Highest", "required": true, "type": "point"},
+                    {"label": "Right_Pelvis_Highest", "required": true, "type": "point"}
+                ],
+                "position_rules": [
+                    {"target": "Left_Pelvis_Highest", "check": "ABSOLUTE_X", "operator": "<", "threshold": 500, "message": "应在左半边"},
+                    {"target": "Right_Pelvis_Highest", "check": "ABSOLUTE_X", "operator": ">", "threshold": 500, "message": "应在右半边"},
+                    {"target": "Left_Pelvis_Highest", "check": "RELATIVE_Y", "operator": ">", "relative_to": "T12", "message": "应在T12下方"},
+                    {"target": "Right_Pelvis_Highest", "check": "RELATIVE_Y", "operator": ">", "relative_to": "T12", "message": "应在T12下方"}
+                ]
+            }
+        },
+        {
+            "id": "AP_SACRUM_POSITION_CHECK",
+            "name_cn": "正位骶1椎体上缘左右点检查",
+            "enabled": true,
+            "view": "AP",
+            "check_type": "POINT_POSITION_CHECK",
+            "params": {
+                "target_labels": [
+                    {"label": "S1_Superior_L", "required": true, "type": "point"},
+                    {"label": "S1_Superior_R", "required": true, "type": "point"}
+                ],
+                "position_rules": [
+                    {"target": "S1_Superior_L", "check": "RELATIVE_Y", "operator": ">", "relative_to": "L5", "message": "应在L5下方"},
+                    {"target": "S1_Superior_R", "check": "RELATIVE_Y", "operator": ">", "relative_to": "L5", "message": "应在L5下方"},
+                    {"target": "S1_Superior_L", "check": "RELATIVE_X", "operator": "<", "relative_to": "S1_Superior_R", "message": "S1_L应在S1_R左侧"}
+                ]
+            }
+        },
+
+        {
+            "id": "LAT_S1_ENDPLATE_CHECK",
+            "name_cn": "侧位骶椎上终板直线标注检查",
+            "enabled": true,
+            "view": "LAT",
+            "check_type": "POINT_POSITION_CHECK",
+            "params": {
+                "target_labels": [
+                    {"label": "S1_Superior_Endplate_Line", "required": true, "type": "line"}
+                ],
+                "position_rules": [
+                    {"target": "S1_Superior_Endplate_Line", "check": "RELATIVE_Y", "operator": ">", "relative_to": "L5", "message": "应在L5下方"}
+                ]
+            }
+        },
+        {
+            "id": "LAT_CFH_MIDPOINT_CHECK",
+            "name_cn": "侧位双侧股骨头中点连线中点标注检查",
+            "enabled": true,
+            "view": "LAT",
+            "check_type": "POINT_POSITION_CHECK",
+            "params": {
+                "target_labels": [
+                    {"label": "CFH_Midpoint", "required": true, "type": "point"}
+                ],
+                "position_rules": [
+                    {"target": "CFH_Midpoint", "check": "RELATIVE_Y", "operator": ">", "relative_to": "L5", "message": "应在L5下方"}
+                ]
+            }
+        }
+    ]
+}
